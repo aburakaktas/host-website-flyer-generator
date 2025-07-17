@@ -87,7 +87,7 @@ export default function Home() {
     link.click();
   };
 
-  // Share handler - generates a shareable PDF link
+  // Share handler - downloads PDF directly
   const handleShare = async () => {
     if (!flyer) return;
     
@@ -102,23 +102,31 @@ export default function Home() {
         })
       });
 
-      const data = await response.json();
-      
       if (response.ok) {
-        const fullUrl = `${window.location.origin}${data.url}`;
-        setShareUrl(fullUrl);
+        // Get the PDF blob
+        const pdfBlob = await response.blob();
         
-        // Copy to clipboard
-        await navigator.clipboard.writeText(fullUrl);
+        // Create a temporary URL for the blob
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        
+        // Create a temporary link to download the PDF
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = 'property-flyer.pdf';
+        link.click();
+        
+        // Clean up the temporary URL
+        URL.revokeObjectURL(pdfUrl);
         
         // Show success feedback
-        alert(`Share link copied to clipboard!\n\nAnyone with this link can view and download the PDF:\n${fullUrl}`);
+        alert('PDF downloaded successfully! You can now share this file with others.');
       } else {
-        throw new Error(data.error || 'Failed to generate share link');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate PDF');
       }
     } catch (error) {
-      console.error('Error generating share link:', error);
-      alert('Failed to generate share link. Please check your connection and try again.');
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please check your connection and try again.');
     } finally {
       setShareLoading(false);
     }
@@ -329,7 +337,7 @@ export default function Home() {
                     <span className="inline-flex items-center justify-center w-6 h-6">
                       <DownloadSVG />
                     </span>
-                    <span className="font-inter text-black text-[16px] underline group-hover:text-[#00809D]">Download PDF</span>
+                    <span className="font-inter text-black text-[16px] underline group-hover:text-[#00809D]">Save as PDF</span>
                   </button>
                   {/* Download JPG button */}
                   <button onClick={handleDownloadJPG} className="flex flex-row gap-2 items-center group">
@@ -348,7 +356,7 @@ export default function Home() {
                       <ShareSVG />
                     </span>
                     <span className={`font-inter text-black text-[16px] underline group-hover:text-[#00809D] ${shareLoading ? 'opacity-60' : ''}`}>
-                      {shareLoading ? 'Generating...' : 'Share'}
+                      {shareLoading ? 'Generating...' : 'Share PDF'}
                     </span>
                   </button>
                 </div>
