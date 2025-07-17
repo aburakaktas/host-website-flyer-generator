@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { renderToBuffer } from '@react-pdf/renderer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import React from 'react';
@@ -65,6 +64,7 @@ export async function POST(request: NextRequest) {
       bgShape: bgShapeUrl
     });
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pdfBuffer = await renderToBuffer(pdfElement as any);
 
     console.log('PDF generated successfully');

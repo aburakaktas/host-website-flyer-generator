@@ -55,7 +55,8 @@ export async function POST(req: NextRequest) {
     const qrBase64 = await QRCode.toDataURL(url, { margin: 0, width: 256 });
 
     return NextResponse.json({ image: imgBase64, qr: qrBase64 });
-  } catch (e) {
+  } catch (error) {
+    console.error('Error in flyer generation:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 } 

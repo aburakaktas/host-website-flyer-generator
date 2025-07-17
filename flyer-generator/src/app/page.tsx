@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import Image from 'next/image';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -17,8 +16,6 @@ export default function Home() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [flyer, setFlyer] = useState<FlyerData | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [shareLoading, setShareLoading] = useState(false);
 
   const validateUrl = (value: string) => {
@@ -33,9 +30,7 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setSuccess(false);
     setFlyer(null);
-    setShareUrl(null);
     if (!validateUrl(url)) {
       setError('Please enter a valid URL.');
       return;
@@ -54,7 +49,6 @@ export default function Home() {
         return;
       }
       setFlyer(data);
-      setSuccess(true);
     } catch {
       setError('Could not generate flyer.');
     } finally {
@@ -132,17 +126,7 @@ export default function Home() {
     }
   };
 
-  const EXAMPLE_URLS = [
-    'https://arthemisiarhemes.vacation-bookings.com/',
-    'https://alpenpilaresidence.vacation-bookings.com/',
-    'https://villamitpool-wien.vacation-bookings.com/',
-    'https://casinanapoleonica.vacation-bookings.com/',
-    'https://waldliesel.holiduhost.com/',
-    'https://alpalmentorelais.holiduhost.com/',
-    'https://boutiquehotelcanyamel.holiduhost.com/',
-  ];
 
-  const imgVector = "http://localhost:3845/assets/7d990c7d869de853f3fdf0c3e891fc122993192a.svg";
 
   // Inline SVGs for PDF compatibility
   function HoliduLogoSVG() {
@@ -172,13 +156,7 @@ export default function Home() {
     );
   }
 
-  function PrintSVG() {
-    return (
-      <svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style={{ display: 'block' }} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fillRule="evenodd" clipRule="evenodd" d="M3.6 2.8C3.6 1.2536 4.8536 0 6.4 0H13.6C15.1464 0 16.4 1.2536 16.4 2.8V3.709C18.4597 4.16559 20 6.00291 20 8.2V11.8C20 14.3071 17.9943 16.3457 15.5 16.3989V17.2C15.5 18.7464 14.2464 20 12.7 20H7.3C5.7536 20 4.5 18.7464 4.5 17.2V16.3989C2.00567 16.3457 0 14.3071 0 11.8V8.2C0 6.00291 1.54033 4.16559 3.6 3.709V2.8ZM5.6 3.6H14.4V2.8C14.4 2.35817 14.0418 2 13.6 2H6.4C5.95817 2 5.6 2.35817 5.6 2.8V3.6ZM4.5 14.3981V13.6C4.5 12.0536 5.7536 10.8 7.3 10.8H12.7C14.2464 10.8 15.5 12.0536 15.5 13.6V14.3981C16.8896 14.3456 18 13.2025 18 11.8V8.2C18 6.76406 16.8359 5.6 15.4 5.6H4.6C3.16406 5.6 2 6.76406 2 8.2V11.8C2 13.2025 3.1104 14.3456 4.5 14.3981ZM13.05 7.75C13.05 7.19772 13.4977 6.75 14.05 6.75C15.5964 6.75 16.85 8.0036 16.85 9.55C16.85 10.1023 16.4023 10.55 15.85 10.55C15.2977 10.55 14.85 10.1023 14.85 9.55C14.85 9.10817 14.4918 8.75 14.05 8.75C13.4977 8.75 13.05 8.30228 13.05 7.75ZM7.3 12.8C6.85817 12.8 6.5 13.1582 6.5 13.6V17.2C6.5 17.6418 6.85817 18 7.3 18H12.7C13.1418 18 13.5 17.6418 13.5 17.2V13.6C13.5 13.1582 13.1418 12.8 12.7 12.8H7.3Z" fill="#2B2926"/>
-      </svg>
-    );
-  }
+
 
   function DownloadSVG() {
     return (
@@ -196,28 +174,7 @@ export default function Home() {
     );
   }
 
-  function BgShapeSVG() {
-    return (
-      <svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style={{ display: 'block' }} viewBox="0 0 142 322" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M60.1617 2.91083C67.1507 -0.970275 74.8498 -0.970275 81.8408 2.91083L120.514 24.3794L133.576 31.9504C138.416 34.7559 140.061 40.9452 137.25 45.7749C134.438 50.6047 128.235 52.2458 123.394 49.4404L84.7548 27.0451C81.0026 24.0994 76.2693 22.342 71.1244 22.342C58.9401 22.342 49.0627 32.1977 49.0627 44.3554C49.0627 56.5131 58.9401 66.3689 71.1244 66.3689C90.4422 66.3689 109.76 66.3684 129.078 66.3689C135.478 66.3689 140.811 70.9241 142 76.9623L141.985 292.746C141.981 300.816 137.178 307.788 129.446 310.948C93.3778 325.684 48.5833 325.684 12.5519 310.948C4.82202 307.79 0.0186506 300.816 0.0186506 292.75L0 47.7283C0 40.4713 3.94742 34.1197 10.8334 30.2961L60.1617 2.91083Z" fill="#FF9D87"/>
-      </svg>
-    );
-  }
 
-  function FigmaButton({ label = "Button", disabled = false }: { label?: string; disabled?: boolean }) {
-    return (
-      <button
-        type="submit"
-        disabled={disabled}
-        className={`relative rounded-lg w-full flex flex-row items-center justify-center px-6 py-3 bg-[#00809D] ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
-        style={{ minHeight: 48 }}
-      >
-        <span className="font-inter font-semibold text-white text-base leading-6 tracking-[-0.176px]">
-          {label}
-        </span>
-      </button>
-    );
-  }
 
   // Remove pxToMm helper and revert Flyer to px units
   function Flyer({ image, qr }: { image: string; qr: string }) {
@@ -248,7 +205,7 @@ export default function Home() {
                 <div className="text-[49px] font-bold font-satoshi text-[#45423E] leading-[51px] w-full">Secure the best price</div>
               </div>
               <div className="text-[12px] font-inter text-black w-full leading-[16px]">
-                Booking sites charge commission, we don't. Scan the QR Code to book next year's stay on our official website and <span className="font-bold">save up to 15%.</span>
+                Booking sites charge commission, we don&apos;t. Scan the QR Code to book next year&apos;s stay on our official website and <span className="font-bold">save up to 15%.</span>
               </div>
             </div>
             {/* Holidu logo (PNG) */}
