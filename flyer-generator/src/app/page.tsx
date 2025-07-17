@@ -81,46 +81,33 @@ export default function Home() {
     link.click();
   };
 
-  // Share handler - downloads PDF directly
+  // Share handler - generates shareable link
   const handleShare = async () => {
     if (!flyer) return;
     
     setShareLoading(true);
     try {
-      const response = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          image: flyer.image,
-          qr: flyer.qr
-        })
-      });
-
-      if (response.ok) {
-        // Get the PDF blob
-        const pdfBlob = await response.blob();
-        
-        // Create a temporary URL for the blob
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-        
-        // Create a temporary link to download the PDF
-        const link = document.createElement('a');
-        link.href = pdfUrl;
-        link.download = 'property-flyer.pdf';
-        link.click();
-        
-        // Clean up the temporary URL
-        URL.revokeObjectURL(pdfUrl);
-        
-        // Show success feedback
-        alert('PDF downloaded successfully! You can now share this file with others.');
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate PDF');
-      }
+      // Create shareable data
+      const shareData = {
+        image: flyer.image,
+        qr: flyer.qr
+      };
+      
+      // Encode data for URL
+      const encodedData = encodeURIComponent(JSON.stringify(shareData));
+      
+      // Create shareable URL
+      const shareUrl = `${window.location.origin}/share/${encodedData}`;
+      
+      // Copy to clipboard
+      await navigator.clipboard.writeText(shareUrl);
+      
+      // Show success feedback with the shareable link
+      alert(`Shareable link copied to clipboard!\n\nSend this link to hosts so they can view and print the flyer:\n${shareUrl}`);
+      
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Failed to generate PDF. Please check your connection and try again.');
+      console.error('Error generating share link:', error);
+      alert('Failed to generate share link. Please check your connection and try again.');
     } finally {
       setShareLoading(false);
     }
@@ -313,7 +300,7 @@ export default function Home() {
                       <ShareSVG />
                     </span>
                     <span className={`font-inter text-black text-[16px] underline group-hover:text-[#00809D] ${shareLoading ? 'opacity-60' : ''}`}>
-                      {shareLoading ? 'Generating...' : 'Share PDF'}
+                      {shareLoading ? 'Generating...' : 'Share'}
                     </span>
                   </button>
                 </div>
