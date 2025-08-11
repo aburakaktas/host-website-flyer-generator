@@ -17,15 +17,22 @@ export default function SharePage({ params }: SharePageProps) {
       try {
         // Resolve the params promise
         const resolvedParams = await params;
+        const shareId = resolvedParams.data;
         
-        // Decode the data from URL
-        const decodedData = JSON.parse(decodeURIComponent(resolvedParams.data));
+        // Get the flyer data from the share API
+        const shareResponse = await fetch(`/api/share?id=${shareId}`);
+        
+        if (!shareResponse.ok) {
+          throw new Error('Share link not found or expired');
+        }
+        
+        const shareData = await shareResponse.json();
         
         // Generate PDF
         const response = await fetch('/api/generate-pdf', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(decodedData)
+          body: JSON.stringify(shareData.data)
         });
 
         if (response.ok) {
@@ -36,7 +43,7 @@ export default function SharePage({ params }: SharePageProps) {
           throw new Error('Failed to generate PDF');
         }
       } catch (err) {
-        setError('Failed to load PDF');
+        setError('Failed to load PDF - the share link may have expired');
         console.error('Error generating PDF:', err);
       } finally {
         setLoading(false);

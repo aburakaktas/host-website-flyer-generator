@@ -1,10 +1,5 @@
-Of course. This is excellent information that addresses key technical and user experience details. Using Next.js is a smart choice for this project.
 
-Here is the updated requirements document (Version 3.0) that incorporates your latest points.
-
-***
-
-### **Requirements Document: Property Flyer Generator (Version 3.0)**
+### **Requirements Document: Property Flyer Generator**
 
 **1. Introduction**
 
@@ -70,7 +65,7 @@ All visual elements, including layout, colors, typography, and spacing, must be 
 
 **6. Testing & Validation**
 
-*   The application's image extraction functionality must be tested and confirmed to work with the following example URLs:
+*  The application's generic URL parsing and image extraction functionality should be validated using a sample set of diverse URLs. The following links are examples for this testing phase and do not represent a finite or exhaustive list. The success of the tool depends on its ability to handle URLs beyond this list.
     *   `https://arthemisiarhemes.vacation-bookings.com/`
     *   `https://alpenpilaresidence.vacation-bookings.com/`
     *   `https://villamitpool-wien.vacation-bookings.com/`

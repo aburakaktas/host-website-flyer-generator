@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { Toast } from './components/Toast';
 
 import holiduLogoPng from '../assets/holidu-logo.png';
 import bgShapePng from '../assets/bg-shape.png';
@@ -17,6 +18,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [flyer, setFlyer] = useState<FlyerData | null>(null);
   const [shareLoading, setShareLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const validateUrl = (value: string) => {
     try {
@@ -81,33 +83,40 @@ export default function Home() {
     link.click();
   };
 
-  // Share handler - generates shareable link
+    // Share handler - generates shareable link
   const handleShare = async () => {
     if (!flyer) return;
     
     setShareLoading(true);
     try {
-      // Create shareable data
-      const shareData = {
-        image: flyer.image,
-        qr: flyer.qr
-      };
-      
-      // Encode data for URL
-      const encodedData = encodeURIComponent(JSON.stringify(shareData));
-      
-      // Create shareable URL
-      const shareUrl = `${window.location.origin}/share/${encodedData}`;
-      
-      // Copy to clipboard
-      await navigator.clipboard.writeText(shareUrl);
-      
-      // Show success feedback with the shareable link
-      alert(`Shareable link copied to clipboard!\n\nSend this link to hosts so they can view and print the flyer:\n${shareUrl}`);
+      // Create share data via API
+      const response = await fetch('/api/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image: flyer.image,
+          qr: flyer.qr
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Create shareable URL with short ID
+        const shareUrl = `${window.location.origin}${result.url}`;
+        
+        // Copy to clipboard
+        await navigator.clipboard.writeText(shareUrl);
+        
+        // Show toast notification
+        setShowToast(true);
+      } else {
+        throw new Error('Failed to create share link');
+      }
       
     } catch (error) {
       console.error('Error generating share link:', error);
-      alert('Failed to generate share link. Please check your connection and try again.');
+      // Could add an error toast here if needed
     } finally {
       setShareLoading(false);
     }
@@ -224,6 +233,11 @@ export default function Home() {
 
   return (
     <div className="bg-[#f7f5f3] min-h-screen w-full flex items-center justify-center py-[60px]">
+      <Toast 
+        message="Flyer link copied" 
+        isVisible={showToast} 
+        onClose={() => setShowToast(false)} 
+      />
       <div className="flex flex-col gap-8 items-center justify-start w-[500px]">
         <div className="flex flex-col gap-6 items-center w-[500px]">
           <div className="flex flex-col gap-6 items-center w-[282px]">
