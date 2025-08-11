@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
     marginTop: 18,
   },
   holiduLogo: {
-    height: 50,
-    width: 161.62,
+    height: 24,
+    width: 78,
     marginTop: 47,
   },
   rightSection: {
@@ -121,7 +121,7 @@ export const PdfFlyer: React.FC<PdfFlyerProps> = ({ image, qr, holiduLogo, bgSha
           React.createElement(Text, { style: styles.headline }, 'Love this place?'),
           React.createElement(Text, { style: styles.subheadline }, 'Secure the best price'),
           React.createElement(Text, { style: styles.subtext },
-            "Booking sites charge commission, we don&apos;t. Scan the QR Code to book next year&apos;s stay on our official website and ",
+            "Booking sites charge commission, we don't. Scan the QR Code to book next year's stay on our official website and ",
             React.createElement(Text, { style: { fontWeight: 700 } }, 'save up to 15%.')
           )
         ),

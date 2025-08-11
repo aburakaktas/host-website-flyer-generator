@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { Toast } from './components/Toast';
 
 import holiduLogoPng from '../assets/holidu-logo.png';
@@ -58,17 +57,37 @@ export default function Home() {
     }
   };
 
-  // PDF download handler
+  // PDF download handler - now uses the same API as share functionality
   const handleDownloadPDF = async () => {
-    const flyerEl = document.getElementById('flyer-preview');
-    if (!flyerEl) return;
-    const canvas = await html2canvas(flyerEl, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
-    pdf.save('property-flyer.pdf');
+    if (!flyerData) {
+      console.error('No flyer data available');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image: flyerData.image,
+          qr: flyerData.qr
+        })
+      });
+
+      if (response.ok) {
+        const pdfBlob = await response.blob();
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'property-flyer.pdf';
+        link.click();
+        URL.revokeObjectURL(url);
+      } else {
+        console.error('Failed to generate PDF');
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
   };
 
   // JPG download handler

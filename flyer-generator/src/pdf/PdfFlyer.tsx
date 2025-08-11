@@ -129,7 +129,7 @@ export const PdfFlyer: React.FC<PdfFlyerProps> = ({ image, qr, holiduLogo, bgSha
           <Text style={styles.headline}>Love this place?</Text>
           <Text style={styles.subheadline}>Secure the best price</Text>
           <Text style={styles.subtext}>
-            Booking sites charge commission, we don&apos;t. Scan the QR Code to book next year&apos;s stay on our official website and <Text style={{ fontWeight: 700, fontFamily: 'Inter' }}>save up to 15%.</Text>
+            Booking sites charge commission, we don't. Scan the QR Code to book next year's stay on our official website and <Text style={{ fontWeight: 700, fontFamily: 'Inter' }}>save up to 15%.</Text>
           </Text>
         </View>
         <Image src={holiduLogo} style={styles.holiduLogo} />
