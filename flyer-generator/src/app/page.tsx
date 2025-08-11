@@ -59,7 +59,7 @@ export default function Home() {
 
   // PDF download handler - now uses the same API as share functionality
   const handleDownloadPDF = async () => {
-    if (!flyerData) {
+    if (!flyer) {
       console.error('No flyer data available');
       return;
     }
@@ -69,8 +69,8 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          image: flyerData.image,
-          qr: flyerData.qr
+          image: flyer.image,
+          qr: flyer.qr
         })
       });
 
